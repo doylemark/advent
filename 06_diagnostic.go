@@ -39,39 +39,33 @@ func main() {
 		i++
 	}
 
-	colTotals := make([]int, len(matrix[0]))
+	h := len(matrix)
+	w := len(matrix[0])
 
-	for _, row := range matrix {
-		for i, val := range row {
-			colTotals[i] += val
+	for i := 0; i < w; i++ {
+		colTotal := 0
+
+		for _, row := range matrix {
+			colTotal += row[i]
 		}
-	}
 
-	var g string
-	var e string
+		filter := 1
 
-	for _, col := range colTotals {
-		fmt.Println(col, len(matrix)/2)
-		if col >= (len(matrix) / 2) {
-			g += "1"
-			e += "0"
-		} else {
-			g += "0"
-			e += "1"
+		if colTotal <= (h / 2) {
+			filter = 0
 		}
+
+		prevResult := matrix
+		matrix = [][]int{}
+
+		for _, row := range prevResult {
+			if row[i] == filter {
+				matrix = append(matrix, row)
+			}
+		}
+
+		h = len(matrix)
 	}
 
-	dg, err := strconv.ParseInt(g, 2, 64)
-
-	if err != nil {
-		panic(err)
-	}
-
-	de, err := strconv.ParseInt(e, 2, 64)
-
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println(dg, dg*de)
+	fmt.Println(matrix[0])
 }
