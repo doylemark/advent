@@ -16,8 +16,7 @@ func main() {
 
 	scanner := bufio.NewScanner(f)
 
-	var prev int
-	var nIncreases int
+	var values []int
 
 	for scanner.Scan() {
 		text := scanner.Text()
@@ -28,11 +27,26 @@ func main() {
 			panic(err)
 		}
 
-		if val > prev && prev != 0 {
-			nIncreases++
-		}
+		values = append(values, val)
+	}
 
-		prev = val
+	var prev int
+	var nIncreases int
+
+	for i := range values {
+		if i+3 <= len(values) {
+			var total int
+
+			for _, val := range values[i : i+3] {
+				total = total + val
+			}
+
+			if total > prev && prev != 0 {
+				nIncreases++
+			}
+
+			prev = total
+		}
 	}
 
 	fmt.Println(nIncreases)
