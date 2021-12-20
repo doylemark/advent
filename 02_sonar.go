@@ -14,6 +14,8 @@ func main() {
 		panic(err)
 	}
 
+	defer f.Close()
+
 	scanner := bufio.NewScanner(f)
 
 	var values []int

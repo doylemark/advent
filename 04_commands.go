@@ -15,6 +15,8 @@ func main() {
 		panic(err)
 	}
 
+	defer f.Close()
+
 	scanner := bufio.NewScanner(f)
 
 	var depth int
