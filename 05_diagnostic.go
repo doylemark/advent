@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	f, err := os.Open("data/diagnostic.txt")
+	f, err := os.Open("data/diagnostic_sample.txt")
 
 	if err != nil {
 		panic(err)
@@ -19,60 +19,58 @@ func main() {
 
 	scanner := bufio.NewScanner(f)
 
-	type AvgRecord map[int]int
+	matrix := [][]int{}
 
-	var bitAvgs []AvgRecord
-
+	i := 0
 	for scanner.Scan() {
 		vals := strings.Split(scanner.Text(), "")
 
-		for i, val := range vals {
-			ival, err := strconv.Atoi(val)
+		matrix = append(matrix, []int{})
+
+		for _, val := range vals {
+			iVal, err := strconv.Atoi(val)
 
 			if err != nil {
 				panic(err)
 			}
 
-			if len(bitAvgs) <= i {
-				avg := AvgRecord{
-					0: 0,
-					1: 0,
-				}
-				avg[ival]++
+			matrix[i] = append(matrix[i], iVal)
+		}
+		i++
+	}
 
-				bitAvgs = append(bitAvgs, avg)
-			} else {
-				bitAvgs[i][ival]++
-			}
+	colTotals := make([]int, len(matrix[0]))
+
+	for _, row := range matrix {
+		for i, val := range row {
+			colTotals[i] += val
 		}
 	}
 
-	var gamma string
-	var epsilon string
+	var g string
+	var e string
 
-	for _, avg := range bitAvgs {
-		if avg[0] > avg[1] {
-			gamma += "0"
-			epsilon += "1"
+	for _, col := range colTotals {
+		if col >= (len(matrix) / 2) {
+			g += "1"
+			e += "0"
 		} else {
-			epsilon += "0"
-			gamma += "1"
+			g += "0"
+			e += "1"
 		}
 	}
 
-	igamma, err := strconv.ParseInt(gamma, 2, 64)
+	dg, err := strconv.ParseInt(g, 2, 64)
 
 	if err != nil {
 		panic(err)
 	}
 
-	iepsilon, err := strconv.ParseInt(epsilon, 2, 64)
+	de, err := strconv.ParseInt(e, 2, 64)
 
 	if err != nil {
 		panic(err)
 	}
 
-	power := igamma * iepsilon
-
-	fmt.Println(power)
+	fmt.Println(dg, dg*de)
 }
