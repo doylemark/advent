@@ -39,33 +39,35 @@ func main() {
 		i++
 	}
 
-	h := len(matrix)
 	w := len(matrix[0])
 
+	// iterate over each column in the matrix
 	for i := 0; i < w; i++ {
-		colTotal := 0
+		maj := findMajVal(matrix, i)
 
-		for _, row := range matrix {
-			colTotal += row[i]
-		}
-
-		filter := 1
-
-		if colTotal <= (h / 2) {
-			filter = 0
-		}
-
-		prevResult := matrix
+		prev := matrix
 		matrix = [][]int{}
 
-		for _, row := range prevResult {
-			if row[i] == filter {
+		for _, row := range prev {
+			if row[i] == maj {
 				matrix = append(matrix, row)
 			}
 		}
 
-		h = len(matrix)
+		fmt.Println(matrix)
+	}
+}
+
+func findMajVal(matrix [][]int, colIndex int) int {
+	count := 0
+
+	for _, row := range matrix {
+		count = count + row[colIndex]
 	}
 
-	fmt.Println(matrix[0])
+	if count >= (len(matrix) / 2) {
+		return 1
+	} else {
+		return 0
+	}
 }
