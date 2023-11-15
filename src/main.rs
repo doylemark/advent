@@ -1,3 +1,5 @@
+use std::fs;
+
 use clap::Parser;
 
 mod fifteen;
@@ -9,6 +11,9 @@ struct Args {
     year: String,
     #[arg(short)]
     day: String,
+    #[arg(short)]
+    file_path: Option<String>,
+    input: Option<String>,
 }
 
 enum Year {
@@ -26,14 +31,18 @@ impl From<String> for Year {
 
 pub trait Runner {
     fn new() -> Self;
-    fn run(&self, day: String) -> String;
+    fn run(&self, day: String, input: String) -> String;
 }
 
 fn main() {
-    let args = Args::parse();
+    let mut args = Args::parse();
+
+    if let Some(file_path) = args.file_path {
+        args.input = Some(fs::read_to_string(file_path).expect("Failed to read from {file_path}"));
+    }
 
     let res = match Year::from(args.year) {
-        Year::Fifteen => fifteen::Aoc2015::new().run(args.day),
+        Year::Fifteen => fifteen::Aoc2015::new().run(args.day, args.input.expect("No input given")),
     };
 
     println!("{:?}", res);
