@@ -38,7 +38,7 @@ fn main() {
     let mut args = Args::parse();
 
     if let Some(file_path) = args.file_path {
-        args.input = Some(fs::read_to_string(file_path).expect("Failed to read from {file_path}"));
+        args.input = Some(fs::read_to_string(file_path).expect("Failed to read file"));
     }
 
     let res = match Year::from(args.year) {
