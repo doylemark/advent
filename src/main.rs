@@ -31,7 +31,7 @@ impl From<String> for Year {
 
 pub trait Runner {
     fn new() -> Self;
-    fn run(&self, day: String, input: String) -> String;
+    fn run(&self, day: String, input: String) -> i32;
 }
 
 fn main() {

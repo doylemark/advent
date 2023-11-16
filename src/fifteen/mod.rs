@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::Runner;
 
 pub struct Aoc2015;
@@ -7,18 +9,19 @@ impl Runner for Aoc2015 {
         Self
     }
 
-    fn run(&self, day: String, input: String) -> String {
+    fn run(&self, day: String, input: String) -> i32 {
         match day.as_str() {
             "1" => day_one(input),
             "1.1" => day_one_2(input),
             "2" => day_two(input),
             "2.2" => day_two_2(input),
+            "3" => day_three(input),
             _ => panic!("unknown day!"),
         }
     }
 }
 
-fn day_one(input: String) -> String {
+fn day_one(input: String) -> i32 {
     let mut open_count = 0;
     let mut close_count = 0;
 
@@ -30,10 +33,10 @@ fn day_one(input: String) -> String {
         }
     }
 
-    (open_count - close_count).to_string()
+    open_count - close_count
 }
 
-fn day_one_2(input: String) -> String {
+fn day_one_2(input: String) -> i32 {
     let mut open_count = 0;
     let mut close_count = 0;
 
@@ -45,15 +48,15 @@ fn day_one_2(input: String) -> String {
         }
 
         if open_count - close_count == -1 {
-            return (i + 1).to_string();
+            return (i + 1).try_into().expect("failed to convert index to i32");
         }
     }
 
-    (open_count - close_count).to_string()
+    open_count - close_count
 }
 
-fn day_two(input: String) -> String {
-    let mut total = 0;
+fn day_two(input: String) -> i32 {
+    let mut total: i32 = 0;
 
     for line in input.lines() {
         let dims: Vec<i32> = line
@@ -76,11 +79,11 @@ fn day_two(input: String) -> String {
         total += size + excess;
     }
 
-    total.to_string()
+    total
 }
 
-fn day_two_2(input: String) -> String {
-    let mut total = 0;
+fn day_two_2(input: String) -> i32 {
+    let mut total: i32 = 0;
 
     for line in input.lines() {
         let dims: Vec<i32> = line
@@ -103,7 +106,35 @@ fn day_two_2(input: String) -> String {
         total += vol + min_perim;
     }
 
-    total.to_string()
+    total
+}
+
+fn day_three(input: String) -> i32 {
+    let mut seen = HashMap::<(i32, i32), i32>::new();
+
+    input
+        .chars()
+        .filter(|ch| !ch.is_whitespace())
+        .fold((0, 0), |ctx, ch| {
+            let opr = match ch {
+                '^' => (0, 1),
+                '>' => (1, 0),
+                '<' => (-1, 0),
+                'v' => (0, -1),
+                _ => panic!("unknown operator"),
+            };
+
+            let new_coords = (opr.0 + ctx.0, opr.1 + ctx.1);
+            seen.insert(new_coords, seen.get(&new_coords).unwrap_or(&0) + 1);
+
+            new_coords
+        });
+
+    seen.values()
+        .filter(|n| **n > 0)
+        .copied()
+        .collect::<Vec<i32>>()
+        .len() as i32
 }
 
 #[cfg(test)]
@@ -112,34 +143,41 @@ mod test {
 
     #[test]
     fn day_one_base_case() {
-        assert_eq!(day_one("()()".to_string()), "0".to_string());
+        assert_eq!(day_one("()()".to_string()), 0);
     }
 
     #[test]
     fn day_one_level_negative_3() {
-        assert_eq!(day_one(")())())".to_string()), "-3".to_string());
-        assert_eq!(day_one(")))".to_string()), "-3".to_string());
+        assert_eq!(day_one(")())())".to_string()), 3);
+        assert_eq!(day_one(")))".to_string()), 3);
     }
 
     #[test]
     fn day_one_level_3() {
-        assert_eq!(day_one("))(((((".to_string()), "3".to_string());
-        assert_eq!(day_one("(()(()(".to_string()), "3".to_string());
+        assert_eq!(day_one("))(((((".to_string()), 3);
+        assert_eq!(day_one("(()(()(".to_string()), 3);
     }
 
     #[test]
     fn day_one_2_base_case() {
-        assert_eq!(day_one_2(")".to_string()), "1".to_string());
-        assert_eq!(day_one_2("()())".to_string()), "5".to_string());
+        assert_eq!(day_one_2(")".to_string()), 1);
+        assert_eq!(day_one_2("()())".to_string()), 5);
     }
 
     #[test]
     fn day_two_base_case() {
-        assert_eq!(day_two("2x3x4".to_string()), "58".to_string());
+        assert_eq!(day_two("2x3x4".to_string()), 58);
     }
 
     #[test]
     fn day_two_2_base_case() {
-        assert_eq!(day_two_2("2x3x4".to_string()), "34".to_string());
+        assert_eq!(day_two_2("2x3x4".to_string()), 34);
+    }
+
+    #[test]
+    fn day_three_base_case() {
+        assert_eq!(day_three(">".to_string()), 1);
+        assert_eq!(day_three("^>v<".to_string()), 4);
+        assert_eq!(day_three("^v^v^v^v^v".to_string()), 2);
     }
 }
