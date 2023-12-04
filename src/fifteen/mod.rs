@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use crate::Runner;
 
@@ -14,8 +14,9 @@ impl Runner for Aoc2015 {
             "1" => day_one(input),
             "1.1" => day_one_2(input),
             "2" => day_two(input),
-            "2.2" => day_two_2(input),
+            "2.1" => day_two_2(input),
             "3" => day_three(input),
+            "3.1" => day_three_2(input),
             _ => panic!("unknown day!"),
         }
     }
@@ -137,6 +138,30 @@ fn day_three(input: String) -> i32 {
         .len() as i32
 }
 
+fn day_three_2(input: String) -> i32 {
+    let mut grid = HashSet::new();
+
+    let mut x = [0, 0];
+    let mut y = [0, 0];
+    let mut which = 0;
+
+    for ch in input.chars() {
+        grid.insert((x[which], y[which]));
+        match ch {
+            '^' => y[which] += 1,
+            '>' => x[which] += 1,
+            '<' => x[which] -= 1,
+            'v' => y[which] -= 1,
+            _ => panic!("unknown input"),
+        };
+
+        which = 1 - which;
+    }
+    grid.insert((x[which], y[which]));
+
+    grid.len().try_into().expect("invalid grid len")
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -148,8 +173,8 @@ mod test {
 
     #[test]
     fn day_one_level_negative_3() {
-        assert_eq!(day_one(")())())".to_string()), 3);
-        assert_eq!(day_one(")))".to_string()), 3);
+        assert_eq!(day_one(")())())".to_string()), -3);
+        assert_eq!(day_one(")))".to_string()), -3);
     }
 
     #[test]
