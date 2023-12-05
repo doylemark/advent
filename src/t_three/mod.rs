@@ -15,6 +15,7 @@ impl Runner for Aoc2023 {
             "1" => day_one(input),
             "1.1" => day_one_2(input),
             "2" => day_two(input),
+            "2.2" => day_two_2(input),
             _ => panic!("unknown day!"),
         }
     }
@@ -76,17 +77,17 @@ fn day_one_2(input: String) -> i32 {
         .sum()
 }
 
+#[derive(Copy, Clone)]
 struct Color {
     r: i32,
     g: i32,
     b: i32,
 }
 
-fn day_two(input: String) -> i32 {
-    fn color_quantities(s: String) -> Color {
-        let mut c = Color { r: 0, g: 0, b: 0 };
-
+impl Color {
+    pub fn new(s: String) -> Color {
         let mut current_n = "".to_string();
+        let mut c = Color { r: 0, g: 0, b: 0 };
 
         for ch in s.chars() {
             if ch.is_digit(10) {
@@ -113,6 +114,12 @@ fn day_two(input: String) -> i32 {
         c
     }
 
+    pub fn power(&self) -> i32 {
+        self.r * self.g * self.b
+    }
+}
+
+fn day_two(input: String) -> i32 {
     input
         .split("\n")
         .filter_map(|ln| {
@@ -129,7 +136,7 @@ fn day_two(input: String) -> i32 {
 
             if handfuls
                 .clone()
-                .map(|hf| color_quantities(hf.to_string()))
+                .map(|hf| Color::new(hf.to_string()))
                 .all(|c| c.r <= 12 && c.g <= 13 && c.b <= 14)
             {
                 Some(game_id)
@@ -137,5 +144,41 @@ fn day_two(input: String) -> i32 {
                 None
             }
         })
+        .sum()
+}
+
+fn day_two_2(input: String) -> i32 {
+    input
+        .split("\n")
+        .filter_map(|ln| {
+            let parts = ln.split(":").collect::<Vec<&str>>();
+
+            let handfuls = parts.last().expect("missing handfuls").split(";");
+
+            if let Some(mins) = handfuls
+                .clone()
+                .map(|hf| Color::new(hf.to_string()))
+                .reduce(|mut c, cur| {
+                    if cur.r > c.r {
+                        c.r = cur.r
+                    }
+
+                    if cur.g > c.g {
+                        c.g = cur.g
+                    }
+
+                    if cur.b > c.b {
+                        c.b = cur.b
+                    }
+
+                    c
+                })
+            {
+                Some(mins)
+            } else {
+                None
+            }
+        })
+        .map(|c| c.power())
         .sum()
 }
