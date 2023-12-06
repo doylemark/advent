@@ -16,6 +16,7 @@ impl Runner for Aoc2023 {
             "1.1" => day_one_2(input),
             "2" => day_two(input),
             "2.2" => day_two_2(input),
+            "3" => day_three(input),
             _ => panic!("unknown day!"),
         }
     }
@@ -181,4 +182,76 @@ fn day_two_2(input: String) -> i32 {
         })
         .map(|c| c.power())
         .sum()
+}
+
+fn day_three(input: String) -> i32 {
+    let m = input
+        .split("\n")
+        .map(|ln| ln.chars().collect::<Vec<char>>())
+        .collect::<Vec<Vec<char>>>();
+
+    let has_adj_symbol = |x: usize, y: usize| -> bool {
+        let adjacent: [[i32; 2]; 8] = [
+            [-1, -1],
+            [-1, 0],
+            [-1, 1],
+            [1, -1],
+            [1, 0],
+            [1, 1],
+            [0, 1],
+            [0, -1],
+        ];
+
+        for [a, b] in adjacent {
+            if let Some(row) = m.get((y as i32 + a) as usize) {
+                if let Some(ch) = row.get((x as i32 + b) as usize) {
+                    if !ch.is_numeric() && *ch != '.' {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        false
+    };
+
+    let mut nums: Vec<i32> = vec![];
+
+    for (i, row) in m.iter().enumerate() {
+        let mut current_num: Vec<char> = vec![];
+        let mut start_idx: Option<usize> = None;
+
+        for (j, ch) in row.iter().enumerate() {
+            if ch.is_numeric() {
+                if current_num.is_empty() {
+                    start_idx = Some(j);
+                }
+
+                current_num.push(*ch);
+            } else if !current_num.is_empty() {
+                let n = current_num
+                    .iter()
+                    .collect::<String>()
+                    .parse::<i32>()
+                    .expect("invalid integer");
+
+                if let Some(start) = start_idx {
+                    for x in start..current_num.len() + start {
+                        if has_adj_symbol(x, i) {
+                            nums.push(n);
+                            break;
+                        }
+                    }
+
+                    start_idx = None;
+                    current_num.clear();
+                } else {
+                    panic!("Found num without start index")
+                }
+            } else {
+            }
+        }
+    }
+
+    nums.iter().sum()
 }
