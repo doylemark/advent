@@ -1,5 +1,5 @@
 use core::panic;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use crate::Runner;
 
@@ -15,8 +15,9 @@ impl Runner for Aoc2023 {
             "1" => day_one(input),
             "1.1" => day_one_2(input),
             "2" => day_two(input),
-            "2.2" => day_two_2(input),
+            "2.1" => day_two_2(input),
             "3" => day_three(input),
+            "4" => day_four(input),
             _ => panic!("unknown day!"),
         }
     }
@@ -185,10 +186,11 @@ fn day_two_2(input: String) -> i32 {
 }
 
 fn day_three(input: String) -> i32 {
-    let m = input
-        .split("\n")
-        .map(|ln| ln.chars().collect::<Vec<char>>())
-        .collect::<Vec<Vec<char>>>();
+    let m: Vec<Vec<char>> = input
+        .trim()
+        .lines()
+        .map(|ln| ln.chars().collect())
+        .collect();
 
     let has_adj_symbol = |x: usize, y: usize| -> bool {
         let adjacent: [[i32; 2]; 8] = [
@@ -254,4 +256,27 @@ fn day_three(input: String) -> i32 {
     }
 
     nums.iter().sum()
+}
+
+fn day_four(input: String) -> i32 {
+    input
+        .split("\n")
+        .map(|ln| {
+            let cards = ln
+                .split(":")
+                .last()
+                .unwrap()
+                .split("|")
+                .map(|c| c.split(" ").filter(|s| *s != "").collect::<HashSet<&str>>())
+                .collect::<Vec<HashSet<&str>>>();
+
+            cards
+                .first()
+                .unwrap()
+                .iter()
+                .filter_map(|n| cards.last().unwrap().get(n))
+                .fold(0, |ctx, _| if ctx == 0 { ctx + 1 } else { ctx * 2 })
+        })
+        .filter(|n| *n != 0)
+        .sum()
 }
