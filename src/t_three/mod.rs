@@ -185,6 +185,34 @@ fn day_two_2(input: String) -> i32 {
         .sum()
 }
 
+fn has_adj_symbol(x: i32, y: i32, matrix: &Vec<Vec<char>>) -> bool {
+    let adjacent = vec![
+        [0, 0],
+        [1, 0],
+        [2, 0],
+        [0, 1],
+        [2, 1],
+        [0, 2],
+        [1, 2],
+        [2, 2],
+    ];
+
+    for [mut a, mut b] in adjacent {
+        a -= 1;
+        b -= 1;
+
+        if let Some(row) = matrix.get((y + a) as usize) {
+            if let Some(ch) = row.get((x + b) as usize) {
+                if !ch.is_numeric() && *ch != '.' {
+                    return true;
+                }
+            }
+        }
+    }
+
+    false
+}
+
 fn day_three(input: String) -> i32 {
     let m: Vec<Vec<char>> = input
         .trim()
@@ -192,45 +220,32 @@ fn day_three(input: String) -> i32 {
         .map(|ln| ln.chars().collect())
         .collect();
 
-    let has_adj_symbol = |x: usize, y: usize| -> bool {
-        let adjacent: [[i32; 2]; 8] = [
-            [-1, -1],
-            [-1, 0],
-            [-1, 1],
-            [1, -1],
-            [1, 0],
-            [1, 1],
-            [0, 1],
-            [0, -1],
-        ];
-
-        for [a, b] in adjacent {
-            if let Some(row) = m.get((y as i32 + a) as usize) {
-                if let Some(ch) = row.get((x as i32 + b) as usize) {
-                    if !ch.is_numeric() && *ch != '.' {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        false
-    };
-
     let mut nums: Vec<i32> = vec![];
 
-    for (i, row) in m.iter().enumerate() {
-        let mut current_num: Vec<char> = vec![];
-        let mut start_idx: Option<usize> = None;
+    let mut current_num: Vec<char> = vec![];
+    let mut start_idx: Option<usize> = None;
 
-        for (j, ch) in row.iter().enumerate() {
-            if ch.is_numeric() {
+    for (i, row) in m.iter().enumerate() {
+        'r: for (j, ch) in row.iter().enumerate() {
+            if ch.is_numeric() && j != row.len() - 1 {
                 if current_num.is_empty() {
                     start_idx = Some(j);
                 }
 
                 current_num.push(*ch);
-            } else if !current_num.is_empty() {
+            } else {
+                if ch.is_numeric() && j == row.len() - 1 {
+                    if current_num.is_empty() {
+                        start_idx = Some(j);
+                    }
+
+                    current_num.push(*ch);
+                }
+
+                if current_num.is_empty() {
+                    continue 'r;
+                }
+
                 let n = current_num
                     .iter()
                     .collect::<String>()
@@ -239,7 +254,7 @@ fn day_three(input: String) -> i32 {
 
                 if let Some(start) = start_idx {
                     for x in start..current_num.len() + start {
-                        if has_adj_symbol(x, i) {
+                        if has_adj_symbol(x as i32, i as i32, &m) {
                             nums.push(n);
                             break;
                         }
@@ -250,12 +265,37 @@ fn day_three(input: String) -> i32 {
                 } else {
                     panic!("Found num without start index")
                 }
-            } else {
             }
         }
     }
 
     nums.iter().sum()
+}
+
+#[cfg(test)]
+mod day_3_test {
+    use crate::t_three::has_adj_symbol;
+
+    #[test]
+    fn day_3_matches_diagonal() {
+        let m = vec![
+            vec!['.', '.', '*'],
+            vec!['.', 'a', '.'],
+            vec!['.', '.', '.'],
+        ];
+        assert!(has_adj_symbol(1, 1, &m))
+    }
+
+    #[test]
+    fn day_3_matches_eol() {
+        let m = vec![
+            vec!['7', '8', '.', '.', '.', '.', '.', '.', '.', '.', '.', '9'],
+            vec!['.', '5', '.', '.', '.', '.', '.', '2', '3', '.', '.', '$'],
+            vec!['8', '.', '.', '.', '9', '0', '*', '1', '2', '.', '.', '.'],
+        ];
+
+        assert!(has_adj_symbol(0, 11, &m))
+    }
 }
 
 fn day_four(input: String) -> i32 {
