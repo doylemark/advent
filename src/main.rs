@@ -3,7 +3,7 @@ use std::fs;
 use clap::Parser;
 
 mod fifteen;
-mod t_three;
+mod y2023;
 
 #[derive(Debug, Parser)]
 #[command()]
@@ -45,7 +45,7 @@ fn main() {
     }
 
     let res = match Year::from(args.year) {
-        Year::TThree => t_three::Aoc2023::new().run(args.day, args.input.expect("No input given")),
+        Year::TThree => y2023::Aoc2023::new().run(args.day, args.input.expect("No input given")),
         Year::Fifteen => fifteen::Aoc2015::new().run(args.day, args.input.expect("No input given")),
     };
 
