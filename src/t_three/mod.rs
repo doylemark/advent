@@ -12,18 +12,19 @@ impl Runner for Aoc2023 {
 
     fn run(&self, day: String, input: String) -> i32 {
         match day.as_str() {
-            "1" => day_one(input),
-            "1.1" => day_one_2(input),
-            "2" => day_two(input),
-            "2.1" => day_two_2(input),
-            "3" => day_three(input),
+            "1" => day_1(input),
+            "1.1" => day_1_2(input),
+            "2" => day_2(input),
+            "2.1" => day_2_2(input),
+            "3" => day_3(input),
+            // "3.1" => day_3_2(input),
             "4" => day_four(input),
             _ => panic!("unknown day!"),
         }
     }
 }
 
-fn day_one(input: String) -> i32 {
+fn day_1(input: String) -> i32 {
     input
         .split("\n")
         .map(|ln| {
@@ -37,7 +38,7 @@ fn day_one(input: String) -> i32 {
         .sum()
 }
 
-fn day_one_2(input: String) -> i32 {
+fn day_1_2(input: String) -> i32 {
     let digits = HashMap::from([
         ("one", 1),
         ("two", 2),
@@ -121,7 +122,7 @@ impl Color {
     }
 }
 
-fn day_two(input: String) -> i32 {
+fn day_2(input: String) -> i32 {
     input
         .split("\n")
         .filter_map(|ln| {
@@ -149,7 +150,7 @@ fn day_two(input: String) -> i32 {
         .sum()
 }
 
-fn day_two_2(input: String) -> i32 {
+fn day_2_2(input: String) -> i32 {
     input
         .split("\n")
         .filter_map(|ln| {
@@ -213,7 +214,7 @@ fn has_adj_symbol(x: i32, y: i32, matrix: &Vec<Vec<char>>) -> bool {
     false
 }
 
-fn day_three(input: String) -> i32 {
+fn day_3(input: String) -> i32 {
     let m: Vec<Vec<char>> = input
         .trim()
         .lines()
