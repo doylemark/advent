@@ -64,7 +64,5 @@ pub fn year(attributes: TokenStream, item: TokenStream) -> TokenStream {
         }
     };
 
-    println!("{}", toks);
-
     toks.into()
 }
