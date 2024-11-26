@@ -2,17 +2,17 @@ use proc_macro::TokenStream;
 use proc_macro2::{Ident, Span, TokenTree};
 use quote::quote;
 
-fn build_idents() -> Vec<proc_macro2::Ident> {
+fn build_idents(days: i8) -> Vec<proc_macro2::Ident> {
     let mut parts = vec![];
-    for day in 1..=1 {
+    for day in 1..=days {
         let ident = Ident::new(&["Day", &day.to_string()].join(""), Span::call_site());
         parts.push(ident);
     }
     return parts;
 }
 
-fn get_year(input: proc_macro2::TokenStream) -> proc_macro2::Ident {
-    match input.into_iter().next().unwrap() {
+fn get_year(input: TokenTree) -> proc_macro2::Ident {
+    match input {
         TokenTree::Literal(lit) => {
             return Ident::new(&["Year20", &lit.to_string()].join(""), Span::call_site())
         }
@@ -20,12 +20,26 @@ fn get_year(input: proc_macro2::TokenStream) -> proc_macro2::Ident {
     }
 }
 
+fn get_day(input: TokenTree) -> i8 {
+    match input {
+        TokenTree::Literal(lit) => lit.to_string().parse().unwrap(),
+        _ => panic!("Expected literal"),
+    }
+}
+
 #[proc_macro_attribute]
 pub fn year(attributes: TokenStream, item: TokenStream) -> TokenStream {
     let attr_input: proc_macro2::TokenStream = attributes.into();
+
     let input: proc_macro2::TokenStream = item.into();
-    let y = get_year(attr_input);
-    let idents = build_idents();
+
+    let mut attrs = attr_input.into_iter();
+
+    let y = get_year(attrs.next().expect("expected (year, days completed)"));
+    attrs.next();
+    let days_completed = get_day(attrs.next().expect("expected (year, days completed)"));
+
+    let idents = build_idents(days_completed);
 
     let mut traits = vec![];
     let mut match_arms = vec![];
@@ -39,15 +53,17 @@ pub fn year(attributes: TokenStream, item: TokenStream) -> TokenStream {
             }
         });
 
-        match_arms.push(quote! {
-             #i => {
-                match part {
-                     1 => <#y as #ident>::part1(input),
-                     2 => <#y as #ident>::part2(input),
-                     _ => panic!("part not implemented"),
+        if i <= days_completed {
+            match_arms.push(quote! {
+                 #i => {
+                    match part {
+                         1 => <#y as #ident>::part1(input),
+                         2 => <#y as #ident>::part2(input),
+                         _ => panic!("part not implemented"),
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     let toks = quote! {

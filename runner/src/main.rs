@@ -18,7 +18,7 @@ fn main() {
     let output = match year {
         23 => run2023(day, part, input),
         22 => run2022(day, part, input),
-        _ => panic!("year implemented"),
+        _ => panic!("year not implemented"),
     };
 
     println!("{output}");

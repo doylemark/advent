@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use crate::*;
 
 impl Day1 for Year2023 {
