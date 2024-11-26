@@ -1,8 +1,8 @@
 /target
 data.txt
 sample.txt
-./runner/input.txt
-./runner/output.txt
+runner/input.txt
+runner/output.txt
 *.log
 .DS_Store
 

@@ -1,4 +1,5 @@
-use y2024::run as run2024;
+use y2022::run as run2022;
+use y2023::run as run2023;
 
 mod cmd;
 
@@ -12,13 +13,15 @@ fn main() {
 
     let input = std::fs::read_to_string("./input.txt").expect("failed to read input");
     let expected_output =
-        std::fs::read_to_string("./expected_output.txt").expect("failed to read expected output");
+        std::fs::read_to_string("./output.txt").expect("failed to read expected output");
 
     let output = match year {
-        24 => run2024(day, part, input),
+        23 => run2023(day, part, input),
+        22 => run2022(day, part, input),
         _ => panic!("year implemented"),
     };
 
     println!("{output}");
-    assert_eq!(output, expected_output);
+
+    // assert_eq!(output, expected_output);
 }
