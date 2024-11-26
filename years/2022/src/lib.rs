@@ -1,0 +1,5 @@
+#![clippy::deny(clippy::all)]
+#![feature(custom_inner_attributes)]
+#![feature(proc_macro_hygiene)]
+#[aoc_derive::year(22)]
+mod day1;
