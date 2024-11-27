@@ -1,7 +1,9 @@
+use std::fmt::Display;
+
 use crate::*;
 
 impl Day1 for Year2022 {
-    fn part1(input: String) -> String {
+    fn part1(input: String) -> impl Display {
         let mut max = 0;
         let mut rolling_sum = 0;
 
@@ -19,10 +21,10 @@ impl Day1 for Year2022 {
             rolling_sum += line.parse::<i32>().unwrap();
         }
 
-        return max.to_string();
+        max
     }
 
-    fn part2(input: String) -> String {
+    fn part2(input: String) -> impl Display {
         let mut sums = vec![];
         let mut rolling_sum = 0;
 
@@ -39,6 +41,6 @@ impl Day1 for Year2022 {
         }
 
         sums.sort_by(|a, b| b.cmp(a));
-        sums.iter().take(3).sum::<i32>().to_string()
+        sums.iter().take(3).sum::<i32>()
     }
 }

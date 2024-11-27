@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 y2023 = { path = "../years/2023" }
 y2022 = { path = "../years/2022" }
+y2021 = { path = "../years/2021" }

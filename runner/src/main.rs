@@ -1,3 +1,4 @@
+use y2021::run as run2021;
 use y2022::run as run2022;
 use y2023::run as run2023;
 
@@ -18,6 +19,7 @@ fn main() {
     let output = match year {
         23 => run2023(day, part, input),
         22 => run2022(day, part, input),
+        21 => run2021(day, part, input),
         _ => panic!("year not implemented"),
     };
 

@@ -30,16 +30,15 @@ fn get_day(input: TokenTree) -> i8 {
 #[proc_macro_attribute]
 pub fn year(attributes: TokenStream, item: TokenStream) -> TokenStream {
     let attr_input: proc_macro2::TokenStream = attributes.into();
-
-    let input: proc_macro2::TokenStream = item.into();
-
     let mut attrs = attr_input.into_iter();
-
-    let y = get_year(attrs.next().expect("expected (year, days completed)"));
+    let cur_year = get_year(attrs.next().expect("expected (year, days completed)"));
+    // skip comma in #[year(2023, 1)], just want to match the <year> and <n> ident
     attrs.next();
     let days_completed = get_day(attrs.next().expect("expected (year, days completed)"));
 
     let idents = build_idents(days_completed);
+
+    let input: proc_macro2::TokenStream = item.into();
 
     let mut traits = vec![];
     let mut match_arms = vec![];
@@ -48,8 +47,8 @@ pub fn year(attributes: TokenStream, item: TokenStream) -> TokenStream {
         let i: i8 = (i + 1).try_into().unwrap();
         traits.push(quote! {
             pub trait #ident {
-                fn part1(input: String) -> String;
-                fn part2(input: String) -> String;
+                fn part1(input: String) -> impl std::fmt::Display;
+                fn part2(input: String) -> impl std::fmt::Display;
             }
         });
 
@@ -57,8 +56,8 @@ pub fn year(attributes: TokenStream, item: TokenStream) -> TokenStream {
             match_arms.push(quote! {
                  #i => {
                     match part {
-                         1 => <#y as #ident>::part1(input),
-                         2 => <#y as #ident>::part2(input),
+                         1 => <#cur_year as #ident>::part1(input).to_string(),
+                         2 => <#cur_year as #ident>::part2(input).to_string(),
                          _ => panic!("part not implemented"),
                     }
                 }
@@ -68,7 +67,7 @@ pub fn year(attributes: TokenStream, item: TokenStream) -> TokenStream {
 
     let toks = quote! {
         #input
-        pub struct #y;
+        pub struct #cur_year;
 
         #(#traits)*
 
