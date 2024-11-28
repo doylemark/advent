@@ -1,7 +1,8 @@
 [package]
-name = "y2022"
+name = "aoc2023"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 aoc-derive = { path = "../../crates/aoc-derive" }
+aoc = { path = "../../crates/aoc" }

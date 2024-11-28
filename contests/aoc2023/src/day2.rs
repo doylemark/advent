@@ -6,7 +6,7 @@ impl Day2 for Year2023 {
     // 12 red cubes, 13 green cubes, and 14 blue cubes
     fn part1(input: String) -> impl Display {
         let mut sum = 0;
-        for (i, line) in input.lines().enumerate() {
+        for (_, line) in input.lines().enumerate() {
             let mut red_max = 0;
             let mut blue_max = 0;
             let mut green_max = 0;

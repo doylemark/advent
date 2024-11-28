@@ -4,6 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-y2023 = { path = "../years/2023" }
-y2022 = { path = "../years/2022" }
-y2021 = { path = "../years/2021" }
+aoc2023 = { path = "../contests/aoc2023" }
+aoc2022 = { path = "../contests/aoc2022" }
+aoc2021 = { path = "../contests/aoc2021" }

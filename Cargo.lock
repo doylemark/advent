@@ -16,6 +16,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "aoc2021"
+version = "0.1.0"
+dependencies = [
+ "aoc-derive",
+]
+
+[[package]]
+name = "aoc2022"
+version = "0.1.0"
+dependencies = [
+ "aoc-derive",
+]
+
+[[package]]
+name = "aoc2023"
+version = "0.1.0"
+dependencies = [
+ "aoc",
+ "aoc-derive",
+]
+
+[[package]]
 name = "proc-macro2"
 version = "1.0.92"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -37,9 +59,9 @@ dependencies = [
 name = "runner"
 version = "0.1.0"
 dependencies = [
- "y2021",
- "y2022",
- "y2023",
+ "aoc2021",
+ "aoc2022",
+ "aoc2023",
 ]
 
 [[package]]
@@ -58,25 +80,3 @@ name = "unicode-ident"
 version = "1.0.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3354b9ac3fae1ff6755cb6db53683adb661634f67557942dea4facebec0fee4b"
-
-[[package]]
-name = "y2021"
-version = "0.1.0"
-dependencies = [
- "aoc-derive",
-]
-
-[[package]]
-name = "y2022"
-version = "0.1.0"
-dependencies = [
- "aoc-derive",
-]
-
-[[package]]
-name = "y2023"
-version = "0.1.0"
-dependencies = [
- "aoc",
- "aoc-derive",
-]

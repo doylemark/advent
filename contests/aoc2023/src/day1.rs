@@ -1,7 +1,9 @@
+use std::fmt::Display;
+
 use crate::*;
 
 impl Day1 for Year2023 {
-    fn part1(input: String) -> String {
+    fn part1(input: String) -> impl Display {
         let mut sum = 0;
         for line in input.lines() {
             let mut digits = vec![];
@@ -19,7 +21,7 @@ impl Day1 for Year2023 {
         return sum.to_string();
     }
 
-    fn part2(input: String) -> String {
+    fn part2(input: String) -> impl Display {
         let mut sum = 0;
         for line in input.lines() {
             let mut digits = vec![];

@@ -1,6 +1,6 @@
-use y2021::run as run2021;
-use y2022::run as run2022;
-use y2023::run as run2023;
+use aoc2021::run as run2021;
+use aoc2022::run as run2022;
+use aoc2023::run as run2023;
 
 mod cmd;
 
@@ -13,8 +13,8 @@ fn main() {
     );
 
     let input = std::fs::read_to_string("./input.txt").expect("failed to read input");
-    let expected_output =
-        std::fs::read_to_string("./output.txt").expect("failed to read expected output");
+    // let expected_output =
+    //     std::fs::read_to_string("./output.txt").expect("failed to read expected output");
 
     let output = match year {
         23 => run2023(day, part, input),
