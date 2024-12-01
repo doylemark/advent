@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+aoc2024 = { path = "../contests/aoc2024" }
 aoc2023 = { path = "../contests/aoc2023" }
 aoc2022 = { path = "../contests/aoc2022" }
 aoc2021 = { path = "../contests/aoc2021" }

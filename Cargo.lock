@@ -38,6 +38,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "aoc2024"
+version = "0.1.0"
+dependencies = [
+ "aoc-derive",
+]
+
+[[package]]
 name = "proc-macro2"
 version = "1.0.92"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -62,6 +69,7 @@ dependencies = [
  "aoc2021",
  "aoc2022",
  "aoc2023",
+ "aoc2024",
 ]
 
 [[package]]

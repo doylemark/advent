@@ -1,5 +1,7 @@
 use std::fmt::Display;
 
+use aoc::grid::{Grid, Item};
+
 use crate::*;
 
 impl Day3 for Year2023 {
@@ -64,6 +66,59 @@ impl Day3 for Year2023 {
     }
 
     fn part2(input: String) -> impl Display {
-        input
+        let mut grid: Grid<String, Option<String>> = Grid::default();
+
+        for line in input.lines() {
+            grid.add_row();
+            let mut chars = line.chars().peekable().into_iter();
+
+            while let Some(mut char) = chars.next() {
+                let mut cur = String::new();
+                while char.is_ascii_digit() || (cur.is_empty() && char == '-') {
+                    cur.push(char);
+
+                    if chars.peek().is_some() {
+                        char = chars.next().expect("infallible");
+                    }
+                }
+
+                if cur.is_empty() {
+                    cur.push(char);
+                }
+
+                grid.add(Item {
+                    label: cur,
+                    data: None,
+                });
+            }
+        }
+
+        let mut total = 0;
+
+        for (i, row) in grid.inner.iter().enumerate() {
+            for (j, entry) in row.iter().enumerate() {
+                if entry.label == "*" {
+                    let mut first: Option<i32> = None;
+
+                    grid.visit_around(j, i, |item| {
+                        println!("visting: {} - {}", entry.label, item.label);
+                        match item.label.parse::<i32>() {
+                            Ok(n) => match first {
+                                Some(v) => {
+                                    println!("Adding {n} * {v} {}", n * v);
+                                    total += n * v
+                                }
+                                None => first = Some(n),
+                            },
+                            _ => (),
+                        }
+                    });
+                }
+            }
+        }
+
+        println!("{grid}");
+
+        total
     }
 }
