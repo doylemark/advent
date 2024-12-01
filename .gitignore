@@ -1,8 +1,9 @@
 /target
 data.txt
 sample.txt
-runner/input.txt
+**/input.txt
 runner/output.txt
 *.log
 .DS_Store
+
 
