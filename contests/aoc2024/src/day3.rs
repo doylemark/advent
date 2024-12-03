@@ -6,7 +6,7 @@ impl Day3 for Year2024 {
         let mut fsm = FSM::new();
         let mut sum = 0;
 
-        for ch in input.replace("\n", "").chars() {
+        for ch in input.chars() {
             match fsm.next(ch) {
                 State::End(a, b) => sum += a * b,
                 _ => (),
@@ -17,7 +17,65 @@ impl Day3 for Year2024 {
     }
 
     fn part2(input: String) -> impl Display {
-        input
+        let input = input;
+        let mut toggle_fsm = ToggleFSM::new();
+        let mut fsm = FSM::new();
+        let mut sum = 0;
+
+        let mut is_accepting = true;
+
+        for ch in input.chars() {
+            match toggle_fsm.next(ch) {
+                Tog::Open => is_accepting = true,
+                Tog::Close => is_accepting = false,
+                _ => (),
+            };
+
+            match fsm.next(ch) {
+                State::End(a, b) if is_accepting => sum += a * b,
+                _ => (),
+            }
+        }
+
+        sum
+    }
+}
+
+#[derive(Debug)]
+enum Tog {
+    Do(char),
+    Dont(char),
+    Idle,
+    Open,
+    Close,
+}
+
+struct ToggleFSM {
+    inner: Tog,
+}
+
+impl ToggleFSM {
+    fn new() -> ToggleFSM {
+        ToggleFSM { inner: Tog::Idle }
+    }
+
+    fn next(&mut self, ch: char) -> &Tog {
+        let new = match (&self.inner, ch) {
+            (Tog::Idle | Tog::Open | Tog::Close, 'd') => Tog::Do('o'),
+            (Tog::Do('o'), 'o') => Tog::Do('('),
+            (Tog::Do('('), '(') => Tog::Do(')'),
+            (Tog::Do('('), 'n') => Tog::Dont('\''),
+            (Tog::Do(')'), ')') => Tog::Open,
+            (Tog::Dont('\''), '\'') => Tog::Dont('t'),
+            (Tog::Dont('t'), 't') => Tog::Dont('('),
+            (Tog::Dont('('), '(') => Tog::Dont(')'),
+            (Tog::Dont(')'), ')') => Tog::Close,
+            _ => Tog::Idle,
+        };
+
+        println!("new=[{new:?}]");
+        self.inner = new;
+        &self.inner
     }
 }
 
@@ -172,5 +230,27 @@ mod test {
         }
 
         assert_matches!(fsm.state(), State::End(32, 64))
+    }
+
+    #[test]
+    fn toggles_fsm_matches_do() {
+        let mut fsm = ToggleFSM::new();
+
+        for ch in "do()".chars() {
+            fsm.next(ch);
+        }
+
+        assert_matches!(fsm.inner, Tog::Open)
+    }
+
+    #[test]
+    fn toggles_fsm_matches_dont() {
+        let mut fsm = ToggleFSM::new();
+
+        for ch in "don't()".chars() {
+            fsm.next(ch);
+        }
+
+        assert_matches!(fsm.inner, Tog::Close)
     }
 }
