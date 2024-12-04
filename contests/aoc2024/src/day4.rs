@@ -1,27 +1,8 @@
-use aoc::around::Around;
+use aoc::around::{Around, OFFSETS};
 use aoc::grid::{Grid, Item};
 
 use crate::*;
 use std::fmt::Display;
-
-const OFFSETS: [(i32, i32); 8] = [
-    // north
-    (0i32, -1i32),
-    // south
-    (0, 1),
-    // east
-    (1, 0),
-    // west
-    (-1, 0),
-    // northeast
-    (1, -1),
-    // northwest
-    (-1, -1),
-    // southeast
-    (1, 1),
-    // southwest
-    (-1, 1),
-];
 
 impl Day4 for Year2024 {
     fn part1(input: String) -> impl Display {
@@ -34,32 +15,22 @@ impl Day4 for Year2024 {
 }
 
 fn find_xmas(input: String) -> i32 {
-    let mut grid = Grid::default();
-
-    for row in input.lines() {
-        grid.add_row();
-
-        for ch in row.chars() {
-            grid.add(Item {
-                label: ch,
-                data: (),
-            });
-        }
-    }
+    let grid = input
+        .lines()
+        .map(|l| l.chars().collect::<Vec<_>>())
+        .collect::<Vec<_>>();
 
     let mut sum = 0;
-    for (i, line) in input.lines().enumerate() {
-        let line = line.chars();
-
-        for (j, ch) in line.enumerate() {
+    for (i, line) in grid.clone().into_iter().enumerate() {
+        for (j, ch) in line.into_iter().enumerate() {
             if ch == 'X' {
                 for offset in &OFFSETS {
                     let mut next = 'M';
                     let offset = (1..=3).map(|n| (offset.0 * n, offset.1 * n));
 
-                    grid.visit_around(i, j, offset, |item| {
-                        if item.label != next {
-                            return;
+                    for adj in grid.around_offsets(i, j, offset.collect()) {
+                        if *adj != next {
+                            continue;
                         }
 
                         match next {
@@ -68,12 +39,11 @@ fn find_xmas(input: String) -> i32 {
                             'S' => sum += 1,
                             _ => panic!("next reached infallible state"),
                         }
-                    });
+                    }
                 }
             }
         }
     }
-    println!("{grid}");
 
     sum
 }
@@ -86,26 +56,25 @@ fn find_mas(input: String) -> impl Display {
 
     let mut sum = 0;
     for (i, line) in grid.clone().into_iter().enumerate() {
-        'X: for (j, ch) in line.into_iter().enumerate() {
+        for (j, ch) in line.into_iter().enumerate() {
             if ch == 'A' {
-                let offsets = vec![vec![(-1, -1), (1, 1)], vec![(1, -1), (-1, 1)]];
+                let offsets = vec![(-1, -1), (1, 1), (1, -1), (-1, 1)];
 
-                let mut good = 0;
-                'next: for offset in offsets {
-                    let mut prev = None;
-                    for corner in grid.around_offsets(i, j, offset) {
-                        println!("{corner}");
-                        match (prev, corner) {
-                            (None, 'M' | 'S') => prev = Some(*corner),
-                            (Some('M'), 'S') => good += 1,
-                            (Some('S'), 'M') => good += 1,
-                            _ => continue 'next,
+                let mut seen = 0;
+                let mut prev = None;
+
+                for corner in grid.around_offsets(i, j, offsets) {
+                    match (prev, corner) {
+                        (None, 'M' | 'S') => prev = Some(*corner),
+                        (Some('M'), 'S') | (Some('S'), 'M') => {
+                            seen += 1;
+                            prev = None
                         }
+                        _ => break,
                     }
                 }
 
-                println!("good ={good}");
-                if good == 2 {
+                if seen == 2 {
                     sum += 1;
                 }
             }

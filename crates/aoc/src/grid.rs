@@ -1,5 +1,24 @@
 use core::fmt::Display;
 
+const OFFSETS: [(i32, i32); 8] = [
+    // north
+    (0i32, -1i32),
+    // south
+    (0, 1),
+    // east
+    (1, 0),
+    // west
+    (-1, 0),
+    // northeast
+    (1, -1),
+    // northwest
+    (-1, -1),
+    // southeast
+    (1, 1),
+    // southwest
+    (-1, 1),
+];
+
 #[derive(Debug)]
 pub struct Item<T, U>
 where
@@ -9,11 +28,23 @@ where
     pub data: U,
 }
 
+#[derive(Debug)]
 pub struct Grid<T, U>
 where
     T: ToString,
 {
     pub inner: Vec<Vec<Item<T, U>>>,
+}
+
+pub struct IterGrid<'a, T, U>
+where
+    T: ToString,
+{
+    pub inner: &'a Grid<T, U>,
+    pub offsets: Vec<(i32, i32)>,
+    pub offset_idx: usize,
+    pub i: usize,
+    pub j: usize,
 }
 
 impl<T, U> Display for Grid<T, U>
@@ -79,20 +110,25 @@ where
         self.inner.push(vec![]);
     }
 
-    pub fn visit_around<F>(&self, y: usize, x: usize, mut visit: F)
+    pub fn iter_around<O>(&self, i: usize, j: usize, offsets: O) -> IterGrid<T, U>
+    where
+        O: IntoIterator<Item = (i32, i32)>,
+    {
+        IterGrid {
+            inner: self,
+            offset_idx: 0,
+            offsets: offsets.into_iter().collect::<Vec<_>>(),
+            i,
+            j,
+        }
+    }
+
+    pub fn visit_around<F, I>(&self, y: usize, x: usize, offsets: I, mut visit: F)
     where
         F: FnMut(&Item<T, U>),
+        I: IntoIterator<Item = (i32, i32)>,
     {
-        for (offset_x, offset_y) in [
-            (-1i32, -1i32),
-            (-0, -1),
-            (1, -1),
-            (-1, 0),
-            (1, 0),
-            (-1, 1),
-            (0, 1),
-            (1, 1),
-        ] {
+        for (offset_x, offset_y) in offsets.into_iter() {
             let x = match offset_x.checked_add(x as i32) {
                 Some(v) => v,
                 None => continue,
@@ -109,9 +145,33 @@ where
             let x = x as usize;
             let y = y as usize;
 
-            if let Some(item) = self.inner.get(x).map(|row| row.get(y).to_owned()).flatten() {
+            if let Some(item) = self.inner.get(y).map(|row| row.get(x).to_owned()).flatten() {
                 visit(item);
             }
         }
+    }
+}
+
+impl<'a, T, U> Iterator for IterGrid<'a, T, U>
+where
+    T: Display,
+{
+    type Item = &'a Item<T, U>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let (offset_x, offset_y) = self.offsets.get(self.offset_idx)?;
+
+        let x = offset_x.checked_add(self.j as i32)?;
+        let y = offset_y.checked_add(self.j as i32)?;
+
+        if x < 0 || y < 0 {
+            return None;
+        }
+
+        let x = x as usize;
+        let y = y as usize;
+
+        self.offset_idx += 1;
+        self.inner.inner.get(y).map(|row| row.get(x)).flatten()
     }
 }

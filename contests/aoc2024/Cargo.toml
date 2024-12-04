@@ -5,3 +5,4 @@ edition = "2021"
 
 [dependencies]
 aoc-derive = { path = "../../crates/aoc-derive" }
+aoc = { path = "../../crates/aoc" }

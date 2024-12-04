@@ -4,6 +4,17 @@ use aoc::grid::{Grid, Item};
 
 use crate::*;
 
+const OFFSETS: [(i32, i32); 8] = [
+    (-1i32, -1i32),
+    (-0, -1),
+    (1, -1),
+    (-1, 0),
+    (1, 0),
+    (-1, 1),
+    (0, 1),
+    (1, 1),
+];
+
 impl Day3 for Year2023 {
     fn part1(input: String) -> impl Display {
         let matrix = input
@@ -100,18 +111,15 @@ impl Day3 for Year2023 {
                 if entry.label == "*" {
                     let mut first: Option<i32> = None;
 
-                    grid.visit_around(j, i, |item| {
-                        println!("visting: {} - {}", entry.label, item.label);
-                        match item.label.parse::<i32>() {
-                            Ok(n) => match first {
-                                Some(v) => {
-                                    println!("Adding {n} * {v} {}", n * v);
-                                    total += n * v
-                                }
-                                None => first = Some(n),
-                            },
-                            _ => (),
-                        }
+                    grid.visit_around(j, i, OFFSETS, |item| match item.label.parse::<i32>() {
+                        Ok(n) => match first {
+                            Some(v) => {
+                                println!("Adding {n} * {v} {}", n * v);
+                                total += n * v
+                            }
+                            None => first = Some(n),
+                        },
+                        _ => (),
                     });
                 }
             }
