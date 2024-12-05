@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 aoc-derive = { path = "../../crates/aoc-derive" }
 aoc = { path = "../../crates/aoc" }
+petgraph = { version = "0.6.5" }
