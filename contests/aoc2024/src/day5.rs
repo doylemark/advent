@@ -1,40 +1,5 @@
 use crate::*;
-use std::{
-    cmp::Ordering,
-    collections::{HashMap, HashSet},
-    fmt::Display,
-};
-
-fn parse_input(input: String) -> (HashMap<i32, Vec<i32>>, Vec<Vec<i32>>) {
-    let mut rules = HashMap::<i32, Vec<i32>>::new();
-    let mut lines = input.lines();
-
-    while let Some(line) = lines.next() {
-        if line.is_empty() {
-            break;
-        }
-        let mut nums = line.split("|");
-        let (num, rule) = (
-            nums.next().unwrap().parse().unwrap(),
-            nums.next().unwrap().parse().unwrap(),
-        );
-
-        rules
-            .entry(num)
-            .and_modify(|v| v.push(rule))
-            .or_insert(vec![rule]);
-    }
-
-    let sets = lines
-        .map(|l| {
-            l.split(",")
-                .map(|s| s.parse::<i32>().unwrap())
-                .collect::<Vec<_>>()
-        })
-        .collect::<Vec<_>>();
-
-    (rules, sets)
-}
+use std::{cmp::Ordering, collections::HashSet, fmt::Display};
 
 impl Day5 for Year2024 {
     fn part1(input: String) -> impl Display {
