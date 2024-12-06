@@ -38,67 +38,45 @@ fn parse_input(input: String) -> (HashMap<i32, Vec<i32>>, Vec<Vec<i32>>) {
 
 impl Day5 for Year2024 {
     fn part1(input: String) -> impl Display {
-        let (rules, sets) = parse_input(input);
+        let lines = &mut input.lines();
 
-        let mut sum = 0;
-        let mut seen = HashSet::new();
+        let rules = lines
+            .take_while(|l| !l.is_empty())
+            .map(|l| l.split_once("|").unwrap())
+            .collect::<HashSet<_>>();
 
-        'set: for set in &sets {
-            seen.clear();
-            for num in set {
-                match rules.get(num) {
-                    Some(num_rules) => {
-                        for rule in num_rules {
-                            if seen.contains(rule) {
-                                continue 'set;
-                            }
-                        }
-                    }
-                    None => (),
-                }
-                seen.insert(num);
-            }
+        lines
+            .filter_map(|line| {
+                let nums = line.split(",").collect::<Vec<_>>();
 
-            sum += set.get(set.len() / 2).unwrap();
-        }
-
-        sum
+                nums.is_sorted_by(|&a, &b| rules.contains(&(a, b)))
+                    .then(|| nums[nums.len() / 2].parse::<i32>().unwrap())
+            })
+            .sum::<i32>()
     }
 
     fn part2(input: String) -> impl Display {
-        let (rules, sets) = parse_input(input);
+        let lines = &mut input.lines();
 
-        let mut seen = HashSet::new();
-        let mut bad_sets = vec![];
+        let rules = lines
+            .take_while(|l| !l.is_empty())
+            .map(|l| l.split_once("|").unwrap())
+            .collect::<HashSet<_>>();
 
-        'set: for set in &sets {
-            seen.clear();
-            for num in set {
-                match rules.get(num) {
-                    Some(num_rules) => {
-                        for rule in num_rules {
-                            if seen.contains(rule) {
-                                bad_sets.push(set.clone());
-                                continue 'set;
-                            }
+        lines
+            .filter_map(|line| {
+                let mut nums = line.split(",").collect::<Vec<_>>();
+
+                (!nums.is_sorted_by(|&a, &b| rules.contains(&(a, b)))).then(|| {
+                    nums.sort_by(|a, b| {
+                        if rules.contains(&(a, b)) {
+                            Ordering::Greater
+                        } else {
+                            Ordering::Less
                         }
-                    }
-                    None => (),
-                }
-                seen.insert(num);
-            }
-        }
-
-        bad_sets
-            .into_iter()
-            .map(|mut set| {
-                set.sort_unstable_by(|a, b| {
-                    rules
-                        .get(a)
-                        .and_then(|rule| rule.iter().find(|n| *n == b))
-                        .map_or(Ordering::Greater, |_| Ordering::Less)
-                });
-                set.get(set.len() / 2).unwrap().clone()
+                    });
+                    nums[nums.len() / 2].parse::<i32>().unwrap()
+                })
             })
             .sum::<i32>()
     }
