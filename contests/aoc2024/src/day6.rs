@@ -23,7 +23,15 @@ impl Day6 for Year2024 {
     fn part1(input: String) -> impl Display {
         let (matrix, mut cur) = parse_input(&input);
 
-        let mut seen = HashSet::new();
+        let mut seen = vec![];
+
+        for row in &matrix {
+            for _ in row {
+                seen.push(false);
+            }
+        }
+        let width = matrix.get(0).unwrap().len();
+
         let mut n = 1;
         let mut dir = 0;
 
@@ -38,14 +46,14 @@ impl Day6 for Year2024 {
                 None => break,
             };
 
-            if !seen.contains(&(di, dj)) && *ch != '#' {
+            if !seen[di * width + dj] && *ch != '#' {
                 n += 1;
             }
 
             if '#' == *ch {
                 dir = (dir + 1) % 4;
             } else {
-                seen.insert(cur);
+                seen[di * width + dj] = true;
                 cur = (di, dj)
             }
         }
@@ -63,32 +71,30 @@ impl Day6 for Year2024 {
                 if (i, j) == start || matrix[i][j] != '.' {
                     continue;
                 }
-                println!("checking {},{}", i, j);
 
                 matrix[i][j] = '#';
 
                 let mut cur = start;
                 let mut dir = 0;
-                let mut seen = HashSet::new();
+                let mut seen = vec![];
 
-                let mut turn = 0;
+                for row in &matrix {
+                    for _ in row {
+                        seen.push(0);
+                    }
+                }
+                let width = matrix.get(0).unwrap().len();
 
                 while let Some(Some(ch)) = matrix
                     .get(cur.0.wrapping_add_signed(dirs[dir].0))
                     .map(|r| r.get(cur.1.wrapping_add_signed(dirs[dir].1)))
                 {
-                    turn += 1;
-                    if turn > 100000 {
-                        break;
-                    }
-
-                    let hash = (cur.0 * matrix.len() + cur.1) * 4 + dir;
-
-                    if seen.contains(&hash) {
+                    let hash = (cur.0 * width + cur.1) * 4 + dir;
+                    if seen[cur.0 * width + cur.1] == hash {
                         n += 1;
                         break;
                     }
-                    seen.insert(hash);
+                    seen[cur.0 * width + cur.1] = hash;
 
                     if *ch == '#' {
                         dir = (dir + 1) % 4;
