@@ -15,7 +15,7 @@ impl Day7 for Year2024 {
                 .map(|num| num.parse::<i64>().unwrap())
                 .collect::<Vec<_>>();
 
-            if try_all_combinations(&nums, target) {
+            if try_all_combinations(&nums, &vec!['+', '*'], target) {
                 sum += target;
             }
         }
@@ -35,7 +35,7 @@ impl Day7 for Year2024 {
                 .map(|num| num.parse::<i64>().unwrap())
                 .collect::<Vec<_>>();
 
-            if try_all_combinations(&nums, target) {
+            if try_all_combinations(&nums, &vec!['+', '*', '|'], target) {
                 sum += target;
             }
         }
@@ -62,26 +62,20 @@ fn check_combination(nums: &Vec<i64>, target: i64, ops: &Vec<char>) -> bool {
     result == target
 }
 
-fn try_all_combinations(nums: &Vec<i64>, target: i64) -> bool {
+fn try_all_combinations(nums: &Vec<i64>, ops: &Vec<char>, target: i64) -> bool {
     let n = nums.len() - 1;
-    let total_combinations = 3u32.pow(n as u32);
+    let total_combinations = ops.len().pow(n as u32);
 
     for i in 0..total_combinations {
-        let mut ops = vec![];
+        let mut cur = vec![];
         let mut num = i;
 
         for _ in 0..n {
-            match num % 3 {
-                0 => ops.push('+'),
-                1 => ops.push('*'),
-                2 => ops.push('|'),
-                _ => panic!(),
-            }
+            cur.push(ops[num % ops.len()]);
             num /= 3
         }
-        println!("{ops:?}");
 
-        if check_combination(nums, target, &ops) {
+        if check_combination(nums, target, &cur) {
             return true;
         }
     }
