@@ -50,6 +50,11 @@ fn check_combination(nums: &Vec<i64>, target: i64, ops: &Vec<char>) -> bool {
         match ops[i] {
             '+' => result += nums[i + 1],
             '*' => result *= nums[i + 1],
+            '|' => {
+                result = (result.to_string() + &nums[i + 1].to_string())
+                    .parse()
+                    .unwrap()
+            }
             _ => unreachable!(),
         }
     }
@@ -59,18 +64,22 @@ fn check_combination(nums: &Vec<i64>, target: i64, ops: &Vec<char>) -> bool {
 
 fn try_all_combinations(nums: &Vec<i64>, target: i64) -> bool {
     let n = nums.len() - 1;
-    let total_combinations = 1 << n;
+    let total_combinations = 3u32.pow(n as u32);
 
     for i in 0..total_combinations {
         let mut ops = vec![];
+        let mut num = i;
 
-        for j in 0..n {
-            if (i & (1 << j)) == 0 {
-                ops.push('+');
-            } else {
-                ops.push('*');
+        for _ in 0..n {
+            match num % 3 {
+                0 => ops.push('+'),
+                1 => ops.push('*'),
+                2 => ops.push('|'),
+                _ => panic!(),
             }
+            num /= 3
         }
+        println!("{ops:?}");
 
         if check_combination(nums, target, &ops) {
             return true;
