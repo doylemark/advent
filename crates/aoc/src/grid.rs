@@ -1,6 +1,6 @@
 use core::fmt::Display;
 
-const OFFSETS: [(i32, i32); 8] = [
+pub const OFFSETS: [(i32, i32); 8] = [
     // north
     (0i32, -1i32),
     // south

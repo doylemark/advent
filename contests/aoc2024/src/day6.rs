@@ -1,5 +1,5 @@
 use crate::*;
-use std::{collections::HashSet, fmt::Display};
+use std::fmt::Display;
 
 fn parse_input(input: &str) -> (Vec<Vec<char>>, (usize, usize)) {
     let matrix = input

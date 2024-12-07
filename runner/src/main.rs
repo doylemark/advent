@@ -1,3 +1,5 @@
+use std::time::Instant;
+
 use aoc2021::run as run2021;
 use aoc2022::run as run2022;
 use aoc2023::run as run2023;
@@ -13,9 +15,8 @@ fn main() {
             .expect("no command"),
     );
 
+    let before = Instant::now();
     let input = std::fs::read_to_string("./input.txt").expect("failed to read input");
-    // let expected_output =
-    //     std::fs::read_to_string("./output.txt").expect("failed to read expected output");
 
     let output = match year {
         24 => run2024(day, part, input),
@@ -26,6 +27,5 @@ fn main() {
     };
 
     println!("{output}");
-
-    // assert_eq!(output, expected_output);
+    println!("Elapsed time: {:.2?}", before.elapsed());
 }

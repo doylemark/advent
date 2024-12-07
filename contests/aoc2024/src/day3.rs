@@ -97,6 +97,7 @@ impl FSM {
         FSM { inner: State::Idle }
     }
 
+    #[allow(unused)]
     fn state(&self) -> &State {
         &self.inner
     }
