@@ -7,3 +7,4 @@ edition = "2021"
 aoc-derive = { path = "../../crates/aoc-derive" }
 aoc = { path = "../../crates/aoc" }
 petgraph = { version = "0.6.5" }
+itertools = "0.13"
