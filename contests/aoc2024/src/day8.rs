@@ -3,7 +3,6 @@ use itertools::Itertools;
 use std::{
     collections::{HashMap, HashSet},
     fmt::Display,
-    slice::Windows,
 };
 
 #[derive(Eq, PartialEq, Hash, Clone, Copy, Debug)]
