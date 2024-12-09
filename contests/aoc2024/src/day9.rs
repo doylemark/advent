@@ -87,34 +87,30 @@ impl Day9 for Year2024 {
 
         let result = file_sizes.iter().rev().fold(res, |mut arr, (id, size)| {
             if let Some(curr_pos) = arr.iter().position(|x| x == id) {
-                let mut best_pos = curr_pos;
-                let mut current_empty = 0;
-                let mut potential_pos = None;
+                let mut left = 0;
+                let right = curr_pos;
 
-                for i in 0..curr_pos {
-                    if arr[i] == "." {
-                        if potential_pos.is_none() {
-                            potential_pos = Some(i);
-                        }
-                        current_empty += 1;
-                        if current_empty >= *size {
-                            best_pos = potential_pos.unwrap();
-                            break;
-                        }
-                    } else {
-                        current_empty = 0;
-                        potential_pos = None;
+                while left < right {
+                    while left < right && arr[left] != "." {
+                        left += 1;
                     }
-                }
 
-                if best_pos < curr_pos {
-                    for i in curr_pos..curr_pos + size {
-                        arr[i] = ".".to_string();
+                    let mut empty_count = 0;
+                    let potential_start = left;
+                    while left < right && arr[left] == "." {
+                        empty_count += 1;
+                        left += 1;
                     }
-                    for i in best_pos..best_pos + size {
-                        arr[i] = id.clone();
+
+                    if empty_count >= *size {
+                        for i in curr_pos..curr_pos + size {
+                            arr[i] = ".".to_string();
+                        }
+                        for i in potential_start..potential_start + size {
+                            arr[i] = id.clone();
+                        }
+                        break;
                     }
-                } else {
                 }
             }
             arr
