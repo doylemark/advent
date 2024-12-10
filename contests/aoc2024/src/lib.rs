@@ -1,9 +1,10 @@
 #![clippy::deny(clippy::all)]
 #![feature(assert_matches, proc_macro_hygiene, custom_inner_attributes)]
 
-#[aoc_derive::year(24, 9)]
+#[aoc_derive::year(24, 10)]
 //
 mod day1;
+mod day10;
 mod day2;
 mod day3;
 mod day4;
