@@ -1,5 +1,5 @@
 use crate::*;
-use std::{array::from_fn, collections::HashSet, fmt::Display};
+use std::{collections::HashSet, fmt::Display};
 
 impl Day10 for Year2024 {
     fn part1(input: String) -> impl Display {
